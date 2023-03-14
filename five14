@@ -1,0 +1,111 @@
+В текстовом файле с именем FileName1 находится список учеников. Для каждого ученика указан его балл от 0 до 10. 
+Отсортировать эти данные по ключу: балл(убыв.)+фамилия(возр.). Для сортировки использовать Шейкер-сортировку.
+Отсортированные данные вывести в текстовый файл с именем FileName2, выровняв по столбцам. Под фамилию отвести 15 позиций, под баллы ЕГЭ три позиции. 
+Фамилию выровнять по левому краю, а баллы ЕГЭ по правому.
+
+
+#include "pt4.h"
+#include <fstream>
+#include <iomanip>
+#include <Windows.h>
+using namespace std;
+
+void Solve()
+{
+	Task("Five14");
+	SetConsoleCP(1251);
+	SetConsoleOutputCP(1251);
+	string x, in, out, y;
+	int A[50], B[50], n(-1), i(-1);
+	pt >> in >> out;
+	ifstream F1(in);
+	ofstream F2(out);
+	while (!F1.eof()) {
+		n++;
+		i++;
+		F1 >> x;
+		F1 >> A[i];
+		B[n] = n + 1;
+	}
+	int a(0), b(n - 1), l(0);
+	while (a < b) {
+		for (i = a; i <= b; i++) {
+			if (A[i] <= A[i + 1]) {
+				A[i] += A[i + 1];
+				A[i + 1] = A[i] - A[i + 1];
+				A[i] -= A[i + 1];
+				l = i;
+				B[i] += B[i + 1];
+				B[i + 1] = B[i] - B[i + 1];
+				B[i] -= B[i + 1];
+			}
+		}
+		b = l - 1;
+		for (i = b; i >= a; i--) {
+			if (A[i] <= A[i + 1]) {
+				A[i] += A[i + 1];
+				A[i + 1] = A[i] - A[i + 1];
+				A[i] -= A[i + 1];
+				l = i;
+				B[i] += B[i + 1];
+				B[i + 1] = B[i] - B[i + 1];
+				B[i] -= B[i + 1];
+			}
+		}
+		a = l + 1;
+	}
+
+	int x1(0), x2(0), j, c(0);
+	for (int i = 0; i < n; i++) {
+		x1 = c;
+		x2 = c;
+		int L = 0;
+		while (A[x1] == A[x2]) {
+			if (x1 != x2) L++;
+			x2++;
+		}
+		while (L > 0) {
+			x2 = x1 + L;
+			while (x2 > x1) {
+				F1.close();
+				F1.open(in);
+				for (int j = 0; j < B[x1]; j++) {
+					F1 >> x;
+					F1 >> a;
+				}
+				F1.close();
+				F1.open(in);
+				for (int j = 0; j < B[x2]; j++) {
+					F1 >> y;
+					F1 >> a;
+				}
+				j = 0;
+				while ((y[j] == x[j]) && (j < x.length())) {
+					j++;
+				}
+				if (abs(y[j]) > abs(x[j])) {
+					int X = B[x1];
+					B[x1] = B[x2];
+					B[x2] = X;
+				}
+				x2--;
+			}
+			L--;
+		}
+		c++;
+	}
+	F1.close();
+	F1.open(in);
+	for (i = 0; i < n; i++) {
+		for (int j = 0; j < B[i]; j++) {
+			F1 >> x;
+			F1 >> a;
+		}
+		F1.close();
+		F2.width(17);
+		F2 << left << x;
+		F2 << right << A[i] << endl;
+		F1.open(in);
+	}
+	F1.close();
+}
